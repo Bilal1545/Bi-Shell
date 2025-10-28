@@ -82,20 +82,16 @@ export default function Applauncher() {
         } else if (text.startsWith(":")) {
             setList([{
                 name: ":exec",
-                iconName: "utilities-terminal-symbolic",
-                launch: () => clipboard.set(":exec"),
+                iconName: "utilities-terminal-symbolic"
             },{
                 name: "gg",
-                iconName: "utilities-terminal-symbolic",
-                launch: () => clipboard.set("gg"),
+                iconName: "utilities-terminal-symbolic"
             },{
                 name: "ddg",
-                iconName: "utilities-terminal-symbolic",
-                launch: () => clipboard.set("ddg"),
+                iconName: "utilities-terminal-symbolic"
             },{
                 name: "bs",
-                iconName: "utilities-terminal-symbolic",
-                launch: () => clipboard.set(":bs"),
+                iconName: "utilities-terminal-symbolic"
             }] as any);
         }
     }

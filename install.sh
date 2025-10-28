@@ -3,6 +3,7 @@
 # Terminal color codes
 green="\e[32m"
 red="\e[31m"
+yellow="\e[33m"
 reset="\e[0m"
 
 clear
@@ -25,7 +26,7 @@ fi
 # Keep sudo alive for the duration of the script (silent)
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-# Install confirmation (looped)
+# Install confirmation
 while true; do
     read -p "Do you want to install Bi-Shell dependencies? (Yy/Nn) (Default: Y): " install_answer
 
@@ -34,7 +35,7 @@ while true; do
         yay -S --noconfirm swww ags cliphist wl-clipboard hyprland matugen
         break
     elif [[ "$install_answer" == "n" || "$install_answer" == "N" ]]; then
-        echo -e "${red}Dependency installation skipping...${reset}"
+        echo -e "${yellow}Dependency installation skipped...${reset}"
         break
     else
         echo -e "${red}Unavailable answer. Please retry.${reset}"
@@ -45,51 +46,23 @@ tmpdir=$(mktemp -d -t bi-shell-XXXX)
 git clone https://github.com/Bilal1545/BilalDot.git "$tmpdir"
 cd "$tmpdir"
 
-# Copy .config directory to ~/.config
-#echo -e "${green}Copying .config directories to ~/.config...${reset}"
-#rsync -a .config/ ~/.config/
+# Ask for backup
+if [ -d "$HOME/.config" ]; then
+    read -p "Do you want to backup your current .config directory? (Yy/Nn) (Default: Y): " backup_answer
+    if [[ "$backup_answer" == "y" || "$backup_answer" == "Y" || "$backup_answer" == "" ]]; then
+        backup_dir="$HOME/.config_backup_$(date +%Y%m%d_%H%M%S)"
+        echo -e "${green}Backing up current .config to $backup_dir ...${reset}"
+        cp -r "$HOME/.config" "$backup_dir"
+    fi
+fi
+
+# Merge new dotfiles without deleting existing configs
+echo -e "${green}Installing dotfiles into ~/.config ...${reset}"
+mkdir -p "$HOME/.config"
+rsync -a --ignore-existing .config/ "$HOME/.config/"
 
 echo -e "${green}Installing the shell...${reset}"
-cd ./shell/
-sudo rm -rf /usr/share/bi-shell
-sudo ags bundle app.ts /usr/share/bi-shell
-
-cd ../
-
-cp ./bi-shell.conf ~/.config/hypr/bi-shell.conf
-sed -i '$ a source = ~/.config/hypr/bi-shell.conf' ~/.config/hypr/hyprland.conf
-
-mkdir -p ~/.config/matugen
-
-# Matugen confirmation (looped)
-while true; do
-    read -p "Are you using Matugen already? (Yy/Nn) (Default: N): " matugen_answer
-
-    if [[ "$matugen_answer" == "y" || "$matugen_answer" == "Y" ]]; then
-        cp ./bi-shell.json ~/.config/matugen/bi-shell.json
-        sed -i '$ a \
-            [templates.bishell]\
-            \ninput_path = "~/.config/matugen/bi-shell.json"\
-            \noutput_path = "~/.config/bi-shell/colors.json"' ~/.config/matugen/config.toml
-        break
-    elif [[ "$matugen_answer" == "n" || "$matugen_answer" == "N" || "$matugen_answer" == "" ]]; then
-        cp ./bi-shell.json ~/.config/matugen/bi-shell.json
-        touch ~/.config/matugen/config.toml
-        sed -i '$ a \
-            [templates.bishell]\
-            \ninput_path = "~/.config/matugen/bi-shell.json"\
-            \noutput_path = "~/.config/bi-shell/colors.json"' ~/.config/matugen/config.toml
-        break
-    else
-        echo -e "${red}Unavailable answer. Please retry.${reset}"
-    fi
-done
-
-echo -e "Copying icon files..."
-rm -rf ~/.local/share/icons/BiShell
-mkdir -p ~/.local/share/icons/hicolor/scalable/apps/
-cp ./assets/logo.svg ~/.local/share/icons/hicolor/scalable/apps/bishell-logo.svg
-gtk-update-icon-cache ~/.local/share/icons/hicolor/
+# Buraya shell kurulumu ekle
 
 cd ~
 rm -rf "$tmpdir"

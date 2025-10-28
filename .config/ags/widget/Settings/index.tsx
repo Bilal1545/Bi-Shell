@@ -12,10 +12,10 @@ import AstalTray from "gi://AstalTray"
 import AstalMpris from "gi://AstalMpris"
 import AstalApps from "gi://AstalApps"
 import { getAppIcon } from "../misc/getAppIcon"
-import Sidebar from "./Sidebar"
 import { For, With, createBinding, createState } from "ags"
 import { createPoll } from "ags/time"
 import { execAsync, exec } from "ags/process"
+import Pango from "gi://Pango"
 
 function Mpris() {
   const mpris = AstalMpris.get_default()
@@ -25,66 +25,77 @@ function Mpris() {
   return (
     <menubutton>
       <box>
-        <For each={players}>
-          {(player) => {
-            const [app] = apps.exact_query(player.entry)
-            return <image visible={!!app.iconName} iconName={app?.iconName} />
-          }}
-        </For>
+        <image iconName={"multimedia-player-symbolic"} />
       </box>
-      <popover>
+      <popover css={"margin-top: 10px;"} hasArrow={false}>
         <box spacing={4} orientation={Gtk.Orientation.VERTICAL}>
           <For each={players}>
             {(player) => (
               <box spacing={4} widthRequest={200}>
                 <box overflow={Gtk.Overflow.HIDDEN} css="border-radius: 8px;">
                   <image
-                    pixelSize={256}
-                    css={"filter: blur(10px);"}
+                    pixelSize={128}
                     file={createBinding(player, "coverArt")}
+                    css={"min-height: 128px;"}
                   />
                 </box>
                 <box
-                  valign={Gtk.Align.CENTER}
+                  valign={Gtk.Align.START}
                   orientation={Gtk.Orientation.VERTICAL}
                 >
-                  <label xalign={0} label={createBinding(player, "title")} />
+                  <label xalign={0} ellipsize={Pango.EllipsizeMode.END} maxWidthChars={20} label={createBinding(player, "title")} />
                   <label xalign={0} label={createBinding(player, "artist")} />
                 </box>
-                <box hexpand halign={Gtk.Align.END}>
+                <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.END}>
                   <button
-                    onClicked={() => player.previous()}
-                    visible={createBinding(player, "canGoPrevious")}
-                  >
-                    <image iconName="media-seek-backward-symbolic" />
-                  </button>
-                  <button
-                    onClicked={() => player.play_pause()}
-                    visible={createBinding(player, "canControl")}
-                  >
-                    <box>
-                      <image
-                        iconName="media-playback-start-symbolic"
-                        visible={createBinding(
-                          player,
-                          "playbackStatus",
-                        )((s) => s === AstalMpris.PlaybackStatus.PLAYING)}
-                      />
-                      <image
-                        iconName="media-playback-pause-symbolic"
-                        visible={createBinding(
-                          player,
-                          "playbackStatus",
-                        )((s) => s !== AstalMpris.PlaybackStatus.PLAYING)}
-                      />
-                    </box>
-                  </button>
-                  <button
-                    onClicked={() => player.next()}
-                    visible={createBinding(player, "canGoNext")}
-                  >
-                    <image iconName="media-seek-forward-symbolic" />
-                  </button>
+                      onClicked={() => player.play_pause()}
+                      visible={createBinding(player, "canControl")}
+                      halign={Gtk.Align.END}
+                    >
+                      <box>
+                        <image
+                          iconName="media-playback-pause-symbolic"
+                          visible={createBinding(
+                            player,
+                            "playbackStatus",
+                          )((s) => s === AstalMpris.PlaybackStatus.PLAYING)}
+                        />
+                        <image
+                          iconName="media-playback-start-symbolic"
+                          visible={createBinding(
+                            player,
+                            "playbackStatus",
+                          )((s) => s !== AstalMpris.PlaybackStatus.PLAYING)}
+                        />
+                      </box>
+                    </button>
+                  <box hexpand halign={Gtk.Align.END}>
+                    <button
+                      onClicked={() => player.previous()}
+                      visible={createBinding(player, "canGoPrevious")}
+                    >
+                      <image iconName="media-seek-backward-symbolic" />
+                    </button>
+                    <slider
+                      orientation={Gtk.Orientation.HORIZONTAL}
+                      hexpand
+                      value={createBinding(player, "position")}    // mevcut pozisyon
+                      digits={0}
+                      widthRequest={100}
+                      min={0}
+                      max={createBinding(player, "length")}
+                      onChangeValue={(s) => {
+                        const pos = s.get_value()
+                        player.position = pos // Mpris player pozisyonunu güncelle
+                      }}
+                    />
+                    <button
+                      onClicked={() => player.next()}
+                      visible={createBinding(player, "canGoNext")}
+                    >
+                      <image iconName="media-seek-forward-symbolic" />
+                    </button>
+                  </box>
                 </box>
               </box>
             )}
@@ -276,40 +287,37 @@ function Workspaces() {
   )
 }
 
-export default function Bar(gdkmonitor: Gdk.Monitor) {
+export default function Settings() {
   const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
 
-  const out = exec("cat /etc/os-release")
-  const match = out.match(/^LOGO="([^"]+)"/m)
-
   return (
-    <window
-      visible
-      name="bar"
-      class="Bar"
-      namespace={"bi-shell"}
-      gdkmonitor={gdkmonitor}
-      exclusivity={Astal.Exclusivity.EXCLUSIVE}
-      anchor={TOP | LEFT | RIGHT}
+    <Gtk.Window
+      name="settings"
+      class="Settings"
       application={app}
+      onCloseRequest={(self) => {
+        self.hide()
+        return true
+      }}
     >
-      <centerbox>
-        <box $type="start">
-          <button onClicked={() => execAsync("ags toggle launcher")}><image iconName={match[1]} /></button>
-          <Mpris />
-          <Workspaces />
-          <Dock />
+        <box orientation={Gtk.Orientation.VERTICAL}>
+            <box css={"padding: 5px;"} vexpand hexpand valign={Gtk.Align.START}>
+                <button css={"border-radius: 50px; padding: 3px 7px;"} hexpand halign={Gtk.Align.END} onClicked={() => execAsync("ags toggle settings")}><image iconName="window-close-symbolic" /></button>
+            </box>
+            <box vexpand>
+                <box class={"stackbar"} vexpand halign={Gtk.Align.START}>
+                    <button vexpand>
+                        <box>
+                            <image iconName={"focus-top-bar-symbolic"} />
+                            <label label={"Bar"} />
+                        </box>
+                    </button>
+                </box>
+                <box class={"options"} vexpand halign={Gtk.Align.START}>
+                    <label label="bar" />
+                </box>
+            </box>
         </box>
-        <box $type="center">
-          <Clock />
-        </box>
-        <box $type="end">
-          <Tray />
-          <SidebarButton />
-          <Battery />
-          <button onClicked={() => execAsync("ags toggle power")}><image css={"color: #F96793;"} iconName={"system-shutdown-symbolic"} /></button>
-        </box>
-      </centerbox>
-    </window>
+    </Gtk.Window>
   )
-}
+} 
