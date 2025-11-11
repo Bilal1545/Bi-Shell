@@ -61,9 +61,6 @@ echo -e "${green}Installing dotfiles into ~/.config ...${reset}"
 mkdir -p "$HOME/.config"
 rsync -a --ignore-existing .config/ "$HOME/.config/"
 
-echo -e "${green}Installing the shell...${reset}"
-# Buraya shell kurulumu ekle
-
 cd ~
 rm -rf "$tmpdir"
 
