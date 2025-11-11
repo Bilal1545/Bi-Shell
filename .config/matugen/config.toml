@@ -1,0 +1,15 @@
+[config]
+version_check = false
+
+[templates.hyprland]
+input_path = '~/.config/matugen/templates/hyprland.conf'
+output_path = '~/.config/hypr/colors.conf'
+
+[templates.ags]
+input_path = '~/.config/matugen/templates/ags.scss'
+output_path = '~/.config/ags/colors.scss'
+            [templates.bishell]
+            
+input_path = "~/.config/matugen/bi-shell.json"
+            
+output_path = "~/.config/bi-shell/colors.json"

@@ -1,0 +1,7 @@
+{
+    "background": {{colors.background.default.hex}},
+    "foreground": "#FFFFFF",
+    "primary": {{colors.primary.default.hex}},
+    "onPrimary": {{colors.on_primary.default.hex}},
+    "error": {{colors.error.default.hex}}
+}

@@ -1,0 +1,19 @@
+<svg width="362" height="362" viewBox="0 0 250 362" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="redGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d6111b"/>
+      <stop offset="100%" stop-color="#b2171a"/>
+    </linearGradient>
+    <linearGradient id="redGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b2171a"/>
+      <stop offset="100%" stop-color="#A80D0F"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(-45 181 181)">
+  <rect x="32" y="32" width="100" height="100" rx="25" fill="#2A2A2A" />
+  <rect x="146" y="32" width="100" height="100" rx="25" fill="url(#redGradient2)" />
+  <rect x="32" y="146" width="100" height="100" rx="25" fill="url(#redGradient2)" />
+  <rect x="146" y="146" width="100" height="100" rx="25" fill="url(#redGradient1)" />
+  </g>
+</svg>
+

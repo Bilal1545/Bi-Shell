@@ -1,0 +1,424 @@
+@use "sass:string";
+@use "sass:color";
+// https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gtk/theme/Adwaita/_colors-public.scss
+@import "colors.scss";
+
+@function gtkalpha($c, $a) {
+  @return string.unquote("alpha(#{$c},#{$a})");
+}
+
+$fg: white;
+$bg: #171717;
+$radius: 20px;
+/*$primary-color: #51A4E7;
+$onprimary-color: #0F0A06;*/
+
+$primary-color: $primary;
+$onprimary-color: $onPrimary;
+
+* {
+  outline-offset: -1px;
+}
+
+window {
+  transition: all, .1s;
+}
+
+popover.background contents, popover arrow {
+  background: $bg;
+}
+
+button {
+  background: transparent;
+  padding: 4px 7px;
+  border-radius: calc($radius / 1.8);
+  &:hover {
+    //outline: gtkalpha($fg, .05) 1px solid;
+    background: gtkalpha($fg, .05);
+  }
+  &:active {
+    //outline: gtkalpha($fg, .15) 1px solid;
+    background: gtkalpha($fg, .15);
+  }
+}
+
+scrollbar range trough slider {
+  outline: 0;
+}
+
+menubutton.glass,
+button.glass {
+  background: gtkalpha($fg, .05);
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
+  //outline: gtkalpha($fg, .05) 1px solid;
+  &:hover {
+    background: gtkalpha($fg, .15);
+    //outline: gtkalpha($fg, .15) 1px solid;
+  }
+  &:active {
+    background: gtkalpha($fg, .25);
+    //outline: gtkalpha($fg, .25) 1px solid;
+  }
+}
+
+menubutton.active,
+button.active,
+button:checked {
+  background: $primary-color;
+  color: $onprimary-color;
+  //outline: gtkalpha($fg, .05) 1px solid;
+  padding: 4px 7px;
+  &:hover {
+    background: color.scale($primary-color, $lightness: -5%);
+  }
+  &:active {
+    background: color.scale($primary-color, $lightness: -10%);
+    outline: 0;
+  }
+  levelbar trough block.filled {
+    background: $onprimary-color;
+  }
+}
+
+*:focus-within {
+  outline: 0;
+}
+
+togglebutton {
+  transition: .1s;
+}
+
+scale highlight,
+levelbar trough block.filled {
+  background: $primary-color;
+  min-height: 10px;
+}
+
+scale slider {
+  background: transparent;
+  box-shadow: 0;
+}
+
+scale trough {
+  //outline: gtkalpha($fg, .2) 1px solid;
+  &:hover {
+    //outline: gtkalpha($fg, .25) 1px solid;
+  }
+}
+
+window.Bar {
+  background: transparent;
+  color: $fg;
+  font-weight: bold;
+
+  > box {
+    background: $bg;
+    padding: 3px;
+  }
+
+  button {
+    margin: 2px;
+    min-height: 0;
+  }
+  .Workspaces {
+    button {
+      outline: 0;
+      padding: 0;
+      min-width: 10px;
+      min-height: 10px;
+      background: gtkalpha($fg, .8);
+      transition: all .2s;
+      &.empty {
+        background: gtkalpha($fg, .2);
+        min-width: 7px;
+        min-height: 7px;
+      }
+      &.focused {
+        background: $primary-color;
+        min-width: 25px;
+        min-height: 18px;
+        border-radius: calc($radius / 3);
+      }
+    }
+    &:checked button {
+      background: gtkalpha($onprimary-color, .8);
+      &.empty {
+        background: gtkalpha($onprimary-color, .2);
+      }
+      &.focused {
+        background: $onprimary-color;
+      }
+    }
+  }
+}
+
+window.Sidebar {
+  background: $bg;
+  border-radius: $radius;
+  min-width: 425px;
+  margin: 10px;
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+  .content {
+    padding: 10px;
+    padding-top: 0;
+  }
+  .top-menu {
+    background: gtkalpha($fg, .05);
+    border-bottom: gtkalpha($fg, .05) 1px solid;
+    padding: 10px 20px;
+    border-radius: $radius $radius 0 0;
+  }
+  .group {
+    background: gtkalpha($fg, .025);
+    border-radius: calc($radius / 1.5 );
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+  }
+  .controlbutton {
+    background: gtkalpha($fg, .025);
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
+    border-radius: $radius;
+    padding: 10px;
+    .description {
+      color: gtkalpha($fg, .5);
+      font-size: 12px;
+    }
+    button {
+      padding: 8px 8px;
+    }
+  }
+  .title {
+    padding: 5px;
+    label {
+      font-weight: 400;
+      font-size: 16px;
+    }
+  }
+}
+.NotificationCenter {
+  margin: 5px;
+  padding: 0;
+  scrolledwindow {
+    padding: 0;
+    margin: 0;
+  }
+  .Notification {
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
+    background: gtkalpha($fg, .025);
+    border: 0;
+    margin: 0;
+    &.critical { border: 1pt solid gtkalpha($error, 0.4) }
+  }
+}
+
+window.Launcher {
+  background: transparent;
+  color: $fg;
+
+  box.launcher-content {
+    background: $bg;
+    min-width: 400px;
+    border-radius: $radius;
+    padding: 0;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  button:focus-within {
+    background: $primary-color;
+    color: $onprimary-color;
+    //outline: gtkalpha($fg, .15) 1px solid;
+    padding: 5px 7px;
+    &:hover {
+      background: color.scale($primary-color, $lightness: -5%);
+    }
+    &:active {
+      background: color.scale($primary-color, $lightness: -10%);
+      outline: 0;
+    }
+  }
+
+  .input {
+    margin: 8px;
+    entry {
+      background: transparent;
+      padding: 0;
+      * {
+        padding: 0;
+        margin: 0;
+      }
+    }
+    image {
+      color: $primary-color;
+      margin: 5px;
+    }
+  } 
+  .apps {
+    margin: 4px;
+    box {
+      padding: 2px;
+    }
+  }
+}
+
+window.Power {
+  background: gtkalpha($bg, .15);
+  .selection {
+    background: $bg;
+    padding: 30px;
+    border-radius: $radius;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+    > box {
+      button {
+        padding: 20px;
+        border-radius: $radius;
+      }
+      label {
+        font-weight: 400;
+        font-size: 15px;
+      }
+    }
+  }
+}
+
+
+window.NotificationPopups {
+  all: unset;
+}
+
+.Notification {
+  border-radius: 13px;
+  background-color: $bg;
+  margin: 0.5rem 1rem 0.5rem 1rem;
+  box-shadow: 2px 3px 8px 0 gtkalpha(black, 0.4);
+  border: 1pt solid gtkalpha($fg, 0.03);
+
+  &.critical {
+    border: 1pt solid gtkalpha($error, 0.4);
+
+    .header {
+      .app-name {
+        color: gtkalpha($error, 0.8);
+      }
+
+      .app-icon {
+        color: gtkalpha($error, 0.6);
+      }
+    }
+  }
+
+  .header {
+    padding: 0.5rem;
+    color: gtkalpha($fg, 0.5);
+
+    .app-icon {
+      margin: 0 0.4rem;
+    }
+
+    .app-name {
+      margin-right: 0.3rem;
+      font-weight: bold;
+
+      &:first-child {
+        margin-left: 0.4rem;
+      }
+    }
+
+    .time {
+      margin: 0 0.4rem;
+    }
+
+    button {
+      padding: 0.2rem;
+      min-width: 0;
+      min-height: 0;
+    }
+  }
+
+  separator {
+    margin: 0 0.4rem;
+    background-color: gtkalpha($fg, 0.1);
+  }
+
+  .content {
+    margin: 1rem;
+    margin-top: 0.5rem;
+
+    .summary {
+      font-size: 1.2em;
+      color: $fg;
+    }
+
+    .body {
+      color: gtkalpha($fg, 0.8);
+    }
+
+    .image {
+      border: 1px solid gtkalpha($fg, 0.02);
+      margin-right: 0.5rem;
+      border-radius: $radius;
+      min-width: 100px;
+      min-height: 100px;
+      background-size: cover;
+      background-position: center;
+    }
+  }
+
+  .actions {
+    margin: 1rem;
+    margin-top: 0;
+
+    button {
+      margin: 0 0.3rem;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.Overview {
+  background: $bg;
+  padding: 20px;
+  border-radius: $radius;
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+  .WorkspaceThumbnail {
+    padding: 10px;
+    background: gtkalpha($fg, .05);
+    //outline: gtkalpha($fg, .05) 1px solid;
+    border-radius: $radius;
+    &.empty {
+      background: gtkalpha($fg, .025);
+      //outline: gtkalpha($fg, .025) 1px solid;
+      min-width: 150px;
+      min-height: 80px;
+    }
+    .focused {
+      //outline-color: $primary-color;
+    }
+    button {
+      padding: 0;
+    }
+  }
+}
+
+.Lock {
+  background: $bg;
+}
+
+.Dock > box {
+  border-radius: $radius;
+  background: $bg;
+  padding: 10px;
+  .app {
+    padding: 7px;
+  }
+}
+
+.Settings {
+  background: $bg;
+}
